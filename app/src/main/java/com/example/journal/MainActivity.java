@@ -38,24 +38,23 @@ public class MainActivity extends AppCompatActivity {
         }
         context = this;
         setContentView(R.layout.activity_main);
-        ConstraintLayout edit_layout = (ConstraintLayout) LayoutInflater.from(context).inflate(R.layout.group_row, null);
+
+        create_edit_page();
+    }
+
+    public ConstraintLayout inflate_page(int layout_id){
+        ConstraintLayout edit_layout = (ConstraintLayout) LayoutInflater.from(context).inflate(layout_id, null);
         ConstraintLayout main_layout = findViewById(R.id.main_layout);
         main_layout.addView(edit_layout);
         edit_layout.setLayoutParams(ViewFactory.createLayoutParams(0, 0, 0, 0, -1, -1));
+        return edit_layout;
+    }
 
-        ScrollView scroll_layout =  edit_layout.findViewById(R.id.icon_scrollView);
-        ConstraintLayout icon_layout = edit_layout.findViewById(R.id.icon_layout);
+    public void create_edit_page(){
 
-        //BackEndClock.init(this);
+        ConstraintLayout edit_layout = inflate_page(R.layout.group_row);
 
-        //ScrollView scroll_layout = (ScrollView) edit_layout.getChildAt(0);
-        //ViewGroup child_layout = (ViewGroup) scroll_layout.getChildAt(0);
-        //ConstraintLayout icon_layout = (ConstraintLayout) child_layout.getChildAt(0);
-
-        using_custom_layout(icon_layout, scroll_layout);
-        //using_linearlayout();
-        //using_generateLayout();
-        print_view(main_layout, 0);
+        using_custom_layout(edit_layout);
     }
 
     int button_count = 0;
@@ -93,7 +92,11 @@ public class MainActivity extends AppCompatActivity {
         return scroll;
     }
 
-    public void using_custom_layout(ConstraintLayout icon_layout, ScrollView scrollView){
+    public void using_custom_layout(ConstraintLayout edit_layout){
+
+        ScrollView scrollView =  edit_layout.findViewById(R.id.icon_scrollView);
+        ConstraintLayout icon_layout = edit_layout.findViewById(R.id.icon_layout);
+
         LockableScrollView scroll = replace_scrollView(scrollView);
         ConstraintLayout constraintLayout = icon_layout;
         Group_Manager groups = new Group_Manager(this, constraintLayout, scroll);

@@ -45,6 +45,9 @@ public class Icon {
 
     Icon_Debugger icon_debugger;
 
+    boolean dragging = true;
+    boolean clickable = false;
+
 
     @SuppressLint("RestrictedApi")
     public Icon(Context context, Drawable drawable){
@@ -63,6 +66,16 @@ public class Icon {
 
         //roundedCornerLayout.setBackgroundColor(Color.BLACK);
         setup_text();
+    }
+
+    public void edit_mode(){
+        dragging = true;
+        clickable = false;
+    }
+
+    public void journal_mode(){
+        dragging = false;
+        clickable = true;
     }
 
     @SuppressLint("RestrictedApi")
@@ -201,6 +214,18 @@ public class Icon {
                 return true;
             }
         });
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(clickable){
+                    perform_icon_click();
+                }
+            }
+        });
+    }
+
+    public void perform_icon_click(){
+
     }
 
     public void set(float x, float y){
