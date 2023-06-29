@@ -6,12 +6,6 @@ import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-import androidx.core.graphics.drawable.DrawableKt;
-
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import java.nio.file.Files;
 import java.io.*;
 import java.util.*;
 
@@ -20,7 +14,8 @@ public class Image_Processing {
 
 
     //private static Context my_context;
-    private static List<Bitmap> save_drawables;
+    private static List<Bitmap> save_bitmaps;
+    private static ArrayList<Drawable> drawables;
     public static final int icon_draw_width = 200;
     public static final int icon_picture_width = 140;
     public static void rescale(){
@@ -29,6 +24,148 @@ public class Image_Processing {
     public static void setup(Context context){
         //save_drawables = new ArrayList<>();
         //my_context = context;
+    }
+
+    public static Bitmap circle(int width, int shadow_size, int color){
+        //Bitmap bitmap = createColorBitmap(width, width, color);
+        //bitmap = getRoundedCornerBitmap(bitmap, width/4);
+        Bitmap bitmap = createFadedBorderBitmap(width, shadow_size, width/4, color);
+        return bitmap;
+    }
+
+    public static Bitmap createFadedBorderBitmap(int image_width, int borderWidth, int corner, int color) {
+        int transparent_color = Color.TRANSPARENT;
+
+
+        int width = image_width + 2*borderWidth;
+        Bitmap outBitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(outBitmap);
+
+        int xedgeLT = 0;
+        int yedgeLT = 0;
+        int xedgeRT = width;
+        int yedgeRT = 0;
+        int xedgeLB = 0;
+        int yedgeLB = width;
+        int xedgeRB = width;
+        int yedgeRB = width;
+
+        int xinnerLT = 0;
+        int yinnerLT = 0;
+        int xinnerRT = width - borderWidth;
+        int yinnerRT = 0;
+        int xinnerLB = 0;
+        int yinnerLB = width - borderWidth;
+        int xinnerRB = width - borderWidth;
+        int yinnerRB = width - borderWidth;
+
+
+
+        // Create the paint object
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+
+        // Define the gradients for each corner
+//        RadialGradient gradientLT = new RadialGradient(borderWidth, borderWidth, borderWidth, 0xFFFFFFFF, transparent_color, Shader.TileMode.CLAMP); // top-left
+//        RadialGradient gradientRT = new RadialGradient(width - borderWidth, borderWidth, borderWidth, 0xFFFFFFFF, transparent_color, Shader.TileMode.CLAMP); // top-right
+//        RadialGradient gradientRB = new RadialGradient(width - borderWidth, height - borderWidth, borderWidth, 0xFFFFFFFF, transparent_color, Shader.TileMode.CLAMP); // bottom-right
+//        RadialGradient gradientLB = new RadialGradient(borderWidth, height - borderWidth, borderWidth, 0xFFFFFFFF, transparent_color, Shader.TileMode.CLAMP); // bottom-left
+
+        //RadialGradient gradientLT = new RadialGradient(borderWidth, borderWidth, borderWidth, 0xFFFFFFFF, transparent_color, Shader.TileMode.CLAMP); // top-left
+        //RadialGradient gradientRT = new RadialGradient(0, borderWidth, borderWidth, 0xFFFFFFFF, transparent_color, Shader.TileMode.CLAMP); // top-right
+        //RadialGradient gradientRB = new RadialGradient(0, 0, borderWidth, 0xFFFFFFFF, transparent_color, Shader.TileMode.CLAMP); // bottom-right
+        //RadialGradient gradientLB = new RadialGradient(borderWidth, 0, borderWidth, 0xFFFFFFFF, transparent_color, Shader.TileMode.CLAMP); // bottom-left
+
+        int corner_bitmap_size = borderWidth + corner;
+        int[] colors = new int[]{color, color, transparent_color};
+        float middle = (float) corner / (borderWidth + corner);
+        float[] points = new float[]{0.0f, middle, 1.0f};
+        RadialGradient gradientLT = new RadialGradient(corner_bitmap_size, corner_bitmap_size, corner_bitmap_size, colors, points, Shader.TileMode.CLAMP);
+        RadialGradient gradientRT = new RadialGradient(0, corner_bitmap_size, corner_bitmap_size, colors, points, Shader.TileMode.CLAMP);
+        RadialGradient gradientRB = new RadialGradient(0, 0, corner_bitmap_size, colors, points, Shader.TileMode.CLAMP);
+        RadialGradient gradientLB = new RadialGradient(corner_bitmap_size, 0, corner_bitmap_size, colors, points, Shader.TileMode.CLAMP);
+
+
+
+
+        // Apply gradients and draw on each corner
+
+        Bitmap temp_bitmap = Bitmap.createBitmap(corner_bitmap_size, corner_bitmap_size, Bitmap.Config.ARGB_8888);
+        Canvas temp_canvas = new Canvas(temp_bitmap);
+
+        paint.setShader(gradientLT);
+        temp_canvas.drawCircle(corner_bitmap_size, corner_bitmap_size, corner_bitmap_size, paint);
+        canvas.drawBitmap(temp_bitmap, 0, 0, paint);
+
+        temp_bitmap = Bitmap.createBitmap(corner_bitmap_size, corner_bitmap_size, Bitmap.Config.ARGB_8888);
+        temp_canvas = new Canvas(temp_bitmap);
+
+
+        paint.setShader(gradientRT);
+        temp_canvas.drawCircle(0, corner_bitmap_size, corner_bitmap_size, paint);
+        canvas.drawBitmap(temp_bitmap, width - corner_bitmap_size, 0, paint);
+
+        temp_bitmap = Bitmap.createBitmap(corner_bitmap_size, corner_bitmap_size, Bitmap.Config.ARGB_8888);
+        temp_canvas = new Canvas(temp_bitmap);
+
+        paint.setShader(gradientRB);
+        temp_canvas.drawCircle(0, 0, corner_bitmap_size, paint);
+        canvas.drawBitmap(temp_bitmap, width - corner_bitmap_size, width - corner_bitmap_size, paint);
+
+        temp_bitmap = Bitmap.createBitmap(corner_bitmap_size, corner_bitmap_size, Bitmap.Config.ARGB_8888);
+        temp_canvas = new Canvas(temp_bitmap);
+
+        paint.setShader(gradientLB);
+        temp_canvas.drawCircle(corner_bitmap_size, 0, corner_bitmap_size, paint);
+        canvas.drawBitmap(temp_bitmap, 0, width - corner_bitmap_size, paint);
+
+
+
+//        paint.setShader(gradientLT);
+//        canvas.drawCircle(borderWidth, borderWidth, borderWidth, paint);
+//        paint.setShader(gradientRT);
+//        canvas.drawCircle(width - borderWidth, borderWidth, borderWidth, paint);
+//        paint.setShader(gradientRB);
+//        canvas.drawCircle(width - borderWidth, height - borderWidth, borderWidth, paint);
+//        paint.setShader(gradientLB);
+//        canvas.drawCircle(borderWidth, height - borderWidth, borderWidth, paint);
+
+        // Define the gradients for each side
+        LinearGradient gradientTop = new LinearGradient(width / 2, borderWidth, width / 2, 0, color, transparent_color, Shader.TileMode.CLAMP);
+        LinearGradient gradientRight = new LinearGradient(width - borderWidth, width / 2, width, width / 2, color, transparent_color, Shader.TileMode.CLAMP);
+        LinearGradient gradientBottom = new LinearGradient(width / 2, width - borderWidth, width / 2, width, color, transparent_color, Shader.TileMode.CLAMP);
+        LinearGradient gradientLeft = new LinearGradient(borderWidth, width / 2, 0, width / 2, color, transparent_color, Shader.TileMode.CLAMP);
+
+        // Apply gradients and draw on each side
+        paint.setShader(gradientTop);
+        canvas.drawRect(corner_bitmap_size, 0, width - corner_bitmap_size, borderWidth, paint);
+        paint.setShader(gradientRight);
+        canvas.drawRect(width - borderWidth, corner_bitmap_size, width, width - corner_bitmap_size, paint);
+        paint.setShader(gradientBottom);
+        canvas.drawRect(corner_bitmap_size, width - borderWidth, width - corner_bitmap_size, width, paint);
+        paint.setShader(gradientLeft);
+        canvas.drawRect(0, corner_bitmap_size, borderWidth, width - corner_bitmap_size, paint);
+
+        // Draw the original bitmap in the middle
+        //paint.setShader(new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+        //canvas.drawRect(new RectF(borderWidth, borderWidth, width - borderWidth, width - borderWidth), paint);
+
+        return outBitmap;
+    }
+    public static Bitmap createColorBitmap(int width, int height, int color) {
+        // Create an empty, mutable bitmap
+        Bitmap createdBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        // Get a canvas to write on the bitmap
+        Canvas canvas = new Canvas(createdBitmap);
+
+        // Create a paint object with the specified color
+        Paint paint = new Paint();
+        paint.setColor(color);
+
+        // Draw the bitmap
+        canvas.drawRect(0F, 0F, (float) width, (float) height, paint);
+
+        return createdBitmap;
     }
 
     public static Bitmap resizeBitmap(int resource, int targetW, int targetH, Context context) {
@@ -145,10 +282,10 @@ public class Image_Processing {
         return Bitmap.createBitmap(bitmap, startX, startY, finalWidth, finalHeight);
     }
 
-    public static List<Bitmap> drawables(Context my_context){
-//        if(save_drawables != null)
-//            return save_drawables;
-        save_drawables = new ArrayList<>();
+    public static ArrayList<Drawable> drawables(Context my_context){
+        if(drawables != null)
+            return drawables;
+        save_bitmaps = new ArrayList<>();
         int[] drawable_ids = {
                 R.drawable.cat,
                 R.drawable.cow
@@ -157,7 +294,7 @@ public class Image_Processing {
         for(int i = 0; i < drawable_ids.length; i++){
             bitmaps[i] = resizeBitmap(drawable_ids[i], icon_picture_width, icon_picture_width ,my_context);
             bitmaps[i] = cropBitmap_centerAnchor(bitmaps[i], icon_picture_width, icon_picture_width);
-            bitmaps[i] = getRoundedCornerBitmap(bitmaps[i], 50);
+            bitmaps[i] = getRoundedCornerBitmap(bitmaps[i], icon_picture_width/4);
 
 //            Picasso.get().load("http://your.image.url").transform(new RoundedCorn(10, 0)).into(new Target() {
 //                @Override
@@ -182,9 +319,15 @@ public class Image_Processing {
             if(bitmaps[i] == null)
                 System.out.println("error getting drawable: " + i);
             else
-                save_drawables.add(bitmaps[i]);
+                save_bitmaps.add(bitmaps[i]);
         }
-        return save_drawables;
+
+        drawables = new ArrayList<>();
+        for(int i = 0; i < save_bitmaps.size(); i++){
+            Drawable d = new BitmapDrawable(my_context.getResources(), save_bitmaps.get(i));
+            drawables.add(d);
+        }
+        return drawables;
     }
 
 

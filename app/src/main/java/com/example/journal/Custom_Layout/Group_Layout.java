@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -32,9 +33,9 @@ public class Group_Layout {
     String title;
     TextView titleView;
 
-    public Group_Layout(Context context, ViewGroup parent, Group_Manager manager){
+    public Group_Layout(Context context, ViewGroup parent, Group_Manager manager, String name){
         id = count;
-        title = "Group " + id;
+        title = name;
         count++;
         this.manager = manager;
         this.context = context;
@@ -55,6 +56,16 @@ public class Group_Layout {
         titleView.setElevation(100);
         titleView.setTypeface(Typeface.DEFAULT_BOLD);
         titleView.setTextSize(25);
+        titleView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                titleView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                manager.set_coordinates();
+
+                // Now you have the dimensions of the TextView
+            }
+        });
         layout.addView(titleView);
     }
 

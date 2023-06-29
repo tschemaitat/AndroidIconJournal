@@ -25,12 +25,23 @@ public class Group_Manager {
     ArrayList<Drawable> drawables;
     LockableScrollView scroll;
     Icon_Debugger icon_debugger = new Icon_Debugger();
-    public Group_Manager(Context context, ViewGroup parent, LockableScrollView scroll){
+    public Group_Manager(Context context, ViewGroup parent, LockableScrollView scroll, Journal_Describer journal){
         this.scroll = scroll;
         this.parent = parent;
         this.context = context;
-        setup();
+        setup(journal);
+
     }
+
+    public void journal_mode(){
+
+    }
+
+    public void edit_mode(){
+
+    }
+
+
 
     public int[] get_pos_from_cord(int x, int y) {
         for (int i = 0; i < groups.size(); i++) {
@@ -58,21 +69,26 @@ public class Group_Manager {
         return new int[]{-1, -1, -1};
     }
 
-    public void setup(){
-
-        List<Bitmap> bitmaps = Image_Processing.drawables(context);
-        drawables = new ArrayList<>();
-        for(int i = 0; i < bitmaps.size(); i++){
-            Drawable d = new BitmapDrawable(context.getResources(), bitmaps.get(i));
-            drawables.add(d);
+    public void setup(Journal_Describer journal){
+        System.out.println("\n\n\n setting up group");
+        for(int i = 0; i < journal.groups.size(); i++){
+            Group_Describer group_describer = journal.groups.get(i);
+            add_group(group_describer.name);
+            for(int j = 0; j < group_describer.size(); j++){
+                System.out.println("adding icon from journal");
+                Icon_Describer icon_describer = group_describer.get(j);
+                add_icon_plus_layout(new Icon(context, icon_describer.drawable));
+            }
         }
-        add_group();
-        add_icon_plus_layout(new Icon(context, drawables.get(0)));
-        add_icon_plus_layout(new Icon(context, drawables.get(1)));
-        add_icon_plus_layout(new Icon(context, drawables.get(0)));
-        add_icon_plus_layout(new Icon(context, drawables.get(1)));
-        add_icon_plus_layout(new Icon(context, drawables.get(0)));
-        add_icon_plus_layout(new Icon(context, drawables.get(1)));
+
+        drawables = Image_Processing.drawables(context);
+//        add_group();
+//        add_icon_plus_layout(new Icon(context, drawables.get(0)));
+//        add_icon_plus_layout(new Icon(context, drawables.get(1)));
+//        add_icon_plus_layout(new Icon(context, drawables.get(0)));
+//        add_icon_plus_layout(new Icon(context, drawables.get(1)));
+//        add_icon_plus_layout(new Icon(context, drawables.get(0)));
+//        add_icon_plus_layout(new Icon(context, drawables.get(1)));
         set_coordinates();
         print_cord();
     }
@@ -108,9 +124,9 @@ public class Group_Manager {
         set_coordinates();
     }
 
-    public void add_group(){
+    public void add_group(String name){
         System.out.println("adding group");
-        groups.add(new Group_Layout(context, parent, this));
+        groups.add(new Group_Layout(context, parent, this, name));
 //        parent.postOnAnimation(new Runnable() {
 //            @Override
 //            public void run() {

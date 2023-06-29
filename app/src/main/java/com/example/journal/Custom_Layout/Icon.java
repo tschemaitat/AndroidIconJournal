@@ -5,9 +5,12 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,6 +30,8 @@ import com.example.journal.ViewFactory;
 import com.google.android.material.internal.ClippableRoundedCornerLayout;
 
 public class Icon {
+    public static boolean journal_mode = true;
+
     ViewGroup view;
     TextView textView;
     private Row_Layout row;
@@ -43,10 +48,12 @@ public class Icon {
     float layout_position_x = 0;
     float layout_position_y = 0;
 
-    Icon_Debugger icon_debugger;
+    Drawable white_rounded_square;
+    Drawable black_rounded_square;
+    boolean is_white;
+    ImageView background_rounded_square;
 
-    boolean dragging = true;
-    boolean clickable = false;
+    Icon_Debugger icon_debugger;
 
 
     @SuppressLint("RestrictedApi")
@@ -60,22 +67,42 @@ public class Icon {
         textView = (TextView) view.getChildAt(1);
         view.bringChildToFront(image_view);
         image_view.setImageDrawable(drawable);
-        image_view.setLayoutParams(ViewFactory.createLayoutParams(0, 45, 0, 0, Image_Processing.icon_picture_width, Image_Processing.icon_picture_width));
+        ConstraintLayout.LayoutParams image_params = ViewFactory.createLayoutParams(10, -1, 0, 0, Image_Processing.icon_picture_width, Image_Processing.icon_picture_width);
+
+        image_view.setLayoutParams(image_params);
+        //image_view.setVisibility(View.INVISIBLE);
+
         set_drag_listener();
+
+        int shadow_size = 10;
+
+        Bitmap circle = Image_Processing.circle(Image_Processing.icon_picture_width, shadow_size, Color.WHITE);
+        white_rounded_square = new BitmapDrawable(context.getResources(), circle);
+        circle = Image_Processing.circle(Image_Processing.icon_picture_width, shadow_size, Color.BLACK);
+        black_rounded_square = new BitmapDrawable(context.getResources(), circle);
+        background_rounded_square = new ImageView(context);
+        background_rounded_square.setImageDrawable(black_rounded_square);
+        is_white = false;
+        //circle_view.setImageDrawable(context.getDrawable(R.drawable.cow));
+        background_rounded_square.setLayoutParams(ViewFactory.createLayoutParams(0, -1, 0, 0, Image_Processing.icon_picture_width+shadow_size*2, Image_Processing.icon_picture_width+shadow_size*2));
+        view.addView(background_rounded_square);
+
+        System.out.println("\n\n\nbackground fade dimensions: "+circle.getWidth() + ", " + circle.getHeight());
+
+        //edit_mode();
+
 
 
         //roundedCornerLayout.setBackgroundColor(Color.BLACK);
         setup_text();
     }
 
-    public void edit_mode(){
-        dragging = true;
-        clickable = false;
+    public static void edit_mode(){
+        journal_mode = false;
     }
 
-    public void journal_mode(){
-        dragging = false;
-        clickable = true;
+    public static void journal_mode(){
+        journal_mode = true;
     }
 
     @SuppressLint("RestrictedApi")
@@ -198,6 +225,9 @@ public class Icon {
             @SuppressLint("ClickableViewAccessibility")
 
             public boolean onTouch(View v, MotionEvent event) {
+                //if we are not editing, do not do drag
+                if(journal_mode)
+                    return false;
                 if(event.getActionMasked() == MotionEvent.ACTION_DOWN){
                     if(drag != null){
                         if(!drag.finished){
@@ -217,7 +247,8 @@ public class Icon {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clickable){
+                //if we are journal, allow icon clicks
+                if(journal_mode){
                     perform_icon_click();
                 }
             }
@@ -225,7 +256,13 @@ public class Icon {
     }
 
     public void perform_icon_click(){
-
+        if(is_white){
+            is_white = false;
+            background_rounded_square.setImageDrawable(black_rounded_square);
+            return;
+        }
+        is_white = true;
+        background_rounded_square.setImageDrawable(white_rounded_square);
     }
 
     public void set(float x, float y){
