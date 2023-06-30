@@ -2,9 +2,12 @@ package com.example.journal;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import android.Manifest;
+
 import com.example.journal.Custom_Layout.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     //add input text to layout
     Context context;
     ConstraintLayout main_layout;
+    Group_Manager displayed_icons;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -31,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        Drawable_Manager.drawables(this);
+        verifyStoragePermissions(this);
         context = this;
 
         setContentView(R.layout.activity_main);
@@ -40,6 +48,31 @@ public class MainActivity extends AppCompatActivity {
         Journal_Describer journal = User_Information.get_journal(this);
         create_journal_entry_page(journal);
         print_view(main_layout, 0);
+    }
+    private static final int REQUEST_WRITE_STORAGE = 112;
+    private static final int REQUEST_READ_STORAGE = 113;
+    public void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_STORAGE
+            );
+        }
+
+//        permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+//        if (permission != PackageManager.PERMISSION_GRANTED) {
+//            // We don't have permission so prompt the user
+//            ActivityCompat.requestPermissions(
+//                    activity,
+//                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+//                    REQUEST_READ_STORAGE
+//            );
+//        }
     }
 
     public ConstraintLayout inflate_page(int layout_id){
@@ -58,34 +91,34 @@ public class MainActivity extends AppCompatActivity {
         ScrollView scrollView =  edit_layout.findViewById(R.id.icon_scrollView);
         edit_layout.removeView(scrollView);
 
-        Group_Manager groups = using_custom_layout(edit_layout, journal);
-
+        displayed_icons = using_custom_layout(edit_layout, journal);
+        displayed_icons.edit_mode();
         create_button("print cord", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                groups.print_cord();
-                groups.print_tree();
+                displayed_icons.print_cord();
+                displayed_icons.print_tree();
             }
         });
 
         create_button("move icon", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                groups.move_icon(0, 0, 0, 0, 1, 1);
+                displayed_icons.move_icon(0, 0, 0, 0, 1, 1);
             }
         });
 
         create_button("add group", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                groups.add_group("default");
+                displayed_icons.add_group("default");
             }
         });
 
         create_button("add icon", new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                groups.new_icon();
+                displayed_icons.new_icon();
             }
         });
         create_button("exit edit", new View.OnClickListener(){
@@ -97,6 +130,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void close_edit_open_journal(){
+        Journal_Describer new_journal = displayed_icons.get_describer();
+        String data = new_journal.data_string();
+        System.out.println("writing data");
+        File_Utilities.writeFile(context, data);
+        System.out.println("new journal:\n"+data);
+        Journal_Describer from_data = User_Information.parse_from_data(data);
+        System.out.println("parse journal from data: \n" + from_data.data_string());
+        User_Information.set_journal(new_journal);
         main_layout.removeAllViews();
         create_journal_entry_page(User_Information.get_journal(context));
 
@@ -106,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
         Icon.journal_mode();
         ConstraintLayout journal_entry_layout = inflate_page(R.layout.journal_non_edit_entry);
 
-        using_custom_layout(journal_entry_layout, journal);
-
+        displayed_icons = using_custom_layout(journal_entry_layout, journal);
+        displayed_icons.journal_mode();
         ImageView edit_page_button = findViewById(R.id.edit_page_button);
         edit_page_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
     public void close_journal_open_edit(){
         main_layout.removeAllViews();
         create_edit_page(User_Information.get_journal(context));
+
         button_count = 0;
 
     }
@@ -144,22 +186,9 @@ public class MainActivity extends AppCompatActivity {
 
     public LockableScrollView make_custom_scroll(int top_distance, int bottom_distance){
         LockableScrollView scroll = new LockableScrollView(this);
-        //ScrollView old_scroll = scrollView;
-        //scroll.setLayoutParams(old_scroll.getLayoutParams());
         scroll.setLayoutParams(ViewFactory.createLayoutParams(top_distance, bottom_distance, 0, 0, -1, -1));
-        //ViewGroup old_scroll_linearLayout = ((ViewGroup)old_scroll.getChildAt(0));
         ViewGroup scroll_linearLayout = new LinearLayout(this);
-
-        //scroll_linearLayout.setLayoutParams(old_scroll_linearLayout.getLayoutParams());
         scroll.addView(scroll_linearLayout);
-//        int num_children = old_scroll_linearLayout.getChildCount();
-//        //System.out.println("num children");
-//        for(int i = num_children - 1; i >= 0; i--){
-//            View child = old_scroll_linearLayout.getChildAt(0);
-//            old_scroll_linearLayout.removeView(child);
-//            scroll_linearLayout.addView(child);
-//        }
-//        ((ViewGroup)old_scroll.getParent()).addView(scroll);
         return scroll;
     }
 

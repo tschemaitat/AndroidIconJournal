@@ -25,6 +25,8 @@ public class Drag_Manager {
         release_finished_drags();
     }
 
+
+
     public void release_finished_drags(){
         for(int i = current_drags.size() - 1; i >= 0; i--){
             if(current_drags.get(i).finished == true){

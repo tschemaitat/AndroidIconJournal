@@ -6,6 +6,8 @@ import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import com.example.journal.Custom_Layout.Drawable_Describer;
+
 import java.io.*;
 import java.util.*;
 
@@ -14,8 +16,7 @@ public class Image_Processing {
 
 
     //private static Context my_context;
-    private static List<Bitmap> save_bitmaps;
-    private static ArrayList<Drawable> drawables;
+
     public static final int icon_draw_width = 200;
     public static final int icon_picture_width = 140;
     public static void rescale(){
@@ -146,6 +147,10 @@ public class Image_Processing {
         paint.setShader(gradientLeft);
         canvas.drawRect(0, corner_bitmap_size, borderWidth, width - corner_bitmap_size, paint);
 
+        paint.setShader(null);
+        canvas.drawRect(borderWidth, corner_bitmap_size, width-borderWidth, width-corner_bitmap_size, paint);
+        canvas.drawRect(corner_bitmap_size, borderWidth, width-corner_bitmap_size, width - borderWidth, paint);
+
         // Draw the original bitmap in the middle
         //paint.setShader(new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
         //canvas.drawRect(new RectF(borderWidth, borderWidth, width - borderWidth, width - borderWidth), paint);
@@ -214,7 +219,7 @@ public class Image_Processing {
         return bm;
     }
 
-    private static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
                 .getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
@@ -282,53 +287,7 @@ public class Image_Processing {
         return Bitmap.createBitmap(bitmap, startX, startY, finalWidth, finalHeight);
     }
 
-    public static ArrayList<Drawable> drawables(Context my_context){
-        if(drawables != null)
-            return drawables;
-        save_bitmaps = new ArrayList<>();
-        int[] drawable_ids = {
-                R.drawable.cat,
-                R.drawable.cow
-        };
-        Bitmap[] bitmaps = new Bitmap[drawable_ids.length];
-        for(int i = 0; i < drawable_ids.length; i++){
-            bitmaps[i] = resizeBitmap(drawable_ids[i], icon_picture_width, icon_picture_width ,my_context);
-            bitmaps[i] = cropBitmap_centerAnchor(bitmaps[i], icon_picture_width, icon_picture_width);
-            bitmaps[i] = getRoundedCornerBitmap(bitmaps[i], icon_picture_width/4);
 
-//            Picasso.get().load("http://your.image.url").transform(new RoundedCorn(10, 0)).into(new Target() {
-//                @Override
-//                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//                    // Convert bitmap to drawable
-//                    Drawable drawable = new BitmapDrawable(my_context.getResources(), bitmap);
-//
-//                    // Use the drawable
-//                }
-//
-//                @Override
-//                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-//                    // Handle the failure
-//                    System.out.println("TAG"+"Failed to load the image");
-//                }
-//
-//                @Override
-//                public void onPrepareLoad(Drawable placeHolderDrawable) {
-//                    // This method is invoked right before your request is submitted.
-//                }
-//            });
-            if(bitmaps[i] == null)
-                System.out.println("error getting drawable: " + i);
-            else
-                save_bitmaps.add(bitmaps[i]);
-        }
-
-        drawables = new ArrayList<>();
-        for(int i = 0; i < save_bitmaps.size(); i++){
-            Drawable d = new BitmapDrawable(my_context.getResources(), save_bitmaps.get(i));
-            drawables.add(d);
-        }
-        return drawables;
-    }
 
 
 

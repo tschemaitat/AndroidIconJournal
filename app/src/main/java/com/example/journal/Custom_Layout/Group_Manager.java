@@ -25,6 +25,8 @@ public class Group_Manager {
     ArrayList<Drawable> drawables;
     LockableScrollView scroll;
     Icon_Debugger icon_debugger = new Icon_Debugger();
+
+    boolean edit_mode = true;
     public Group_Manager(Context context, ViewGroup parent, LockableScrollView scroll, Journal_Describer journal){
         this.scroll = scroll;
         this.parent = parent;
@@ -34,11 +36,17 @@ public class Group_Manager {
     }
 
     public void journal_mode(){
-
+        edit_mode = false;
     }
 
     public void edit_mode(){
-
+        edit_mode = true;
+        for(int i = 0; i < groups.size(); i++){
+            Group_Layout group = groups.get(i);
+            for(int j = 0; j < group.icons.size(); j++){
+                group.icons.get(j).make_white();
+            }
+        }
     }
 
 
@@ -77,11 +85,10 @@ public class Group_Manager {
             for(int j = 0; j < group_describer.size(); j++){
                 System.out.println("adding icon from journal");
                 Icon_Describer icon_describer = group_describer.get(j);
-                add_icon_plus_layout(new Icon(context, icon_describer.drawable));
+                Drawable_With_Data drawable = Drawable_Manager.get_drawable_from_id(icon_describer.drawable_describer.id);
+                add_icon_plus_layout(new Icon(context, drawable));
             }
         }
-
-        drawables = Image_Processing.drawables(context);
 //        add_group();
 //        add_icon_plus_layout(new Icon(context, drawables.get(0)));
 //        add_icon_plus_layout(new Icon(context, drawables.get(1)));
@@ -93,8 +100,23 @@ public class Group_Manager {
         print_cord();
     }
 
+    public Journal_Describer get_describer(){
+        Journal_Describer journal_describer = new Journal_Describer();
+        for(int g = 0; g < groups.size(); g++){
+            Group_Layout group = groups.get(g);
+            journal_describer.add_group(group.title);
+            for(int i = 0; i < group.icons.size(); i++){
+                Icon icon = group.icons.get(i);
+                journal_describer.add(new Icon_Describer(icon.drawable_with_data.get_describer()));
+            }
+        }
+        return journal_describer;
+    }
+
     public void new_icon(){
-        add_icon_plus_layout(new Icon(context, drawables.get(0)));
+        Icon icon = new Icon(context, Drawable_Manager.get_drawable(0));
+        icon.make_white();
+        add_icon_plus_layout(icon);
     }
 
     public void add_icon(Icon icon){
@@ -173,6 +195,8 @@ public class Group_Manager {
         for(int i = 0; i < groups.size(); i++)
             groups.get(i).print_tree();
     }
+
+
 
 
     public void move_icon(int start_group, int start_row, int start_pos, int end_group, int end_row, int end_position){

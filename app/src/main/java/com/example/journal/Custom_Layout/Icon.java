@@ -7,6 +7,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -50,6 +52,7 @@ public class Icon {
 
     Drawable white_rounded_square;
     Drawable black_rounded_square;
+    Drawable_With_Data drawable_with_data;
     boolean is_white;
     ImageView background_rounded_square;
 
@@ -57,7 +60,8 @@ public class Icon {
 
 
     @SuppressLint("RestrictedApi")
-    public Icon(Context context, Drawable drawable){
+    public Icon(Context context, Drawable_With_Data drawable_with_data){
+        this.drawable_with_data = drawable_with_data;
         this.context = context;
         id = count;
         title = "Icon " + id;
@@ -66,7 +70,7 @@ public class Icon {
         ImageView image_view = ((ImageView)view.getChildAt(0));
         textView = (TextView) view.getChildAt(1);
         view.bringChildToFront(image_view);
-        image_view.setImageDrawable(drawable);
+        image_view.setImageDrawable(drawable_with_data.drawable);
         ConstraintLayout.LayoutParams image_params = ViewFactory.createLayoutParams(10, -1, 0, 0, Image_Processing.icon_picture_width, Image_Processing.icon_picture_width);
 
         image_view.setLayoutParams(image_params);
@@ -90,7 +94,7 @@ public class Icon {
         System.out.println("\n\n\nbackground fade dimensions: "+circle.getWidth() + ", " + circle.getHeight());
 
         //edit_mode();
-
+        make_black();
 
 
         //roundedCornerLayout.setBackgroundColor(Color.BLACK);
@@ -257,12 +261,62 @@ public class Icon {
 
     public void perform_icon_click(){
         if(is_white){
-            is_white = false;
-            background_rounded_square.setImageDrawable(black_rounded_square);
+            make_black();
             return;
         }
+        make_white();
+
+
+    }
+
+    public void make_black(){
+        is_white = false;
+        background_rounded_square.setImageDrawable(black_rounded_square);
+
+        //dimNonTransparentParts(view, 0.5f);
+        addDimOverlay(view, 0.5f);
+        return;
+    }
+
+    public void make_white(){
         is_white = true;
+        //do before in case I want to use the black background for the edit screen
+        addDimOverlay(view, 0.0f);
         background_rounded_square.setImageDrawable(white_rounded_square);
+    }
+
+    public void addDimOverlay(ViewGroup viewGroup, float dimAmount) {
+        // Create and add the overlay
+//        DimOverlay overlay = new DimOverlay(viewGroup.getContext(), null);
+//        viewGroup.addView(overlay, new ViewGroup.LayoutParams(
+//                ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.MATCH_PARENT));
+
+        // Dim the children
+        for (int i = 0; i < viewGroup.getChildCount() - 1; i++) {
+            View child = viewGroup.getChildAt(i);
+            child.setAlpha(1 - dimAmount);
+        }
+    }
+
+    public void dimNonTransparentParts(ViewGroup viewGroup, float dimAmount) {
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View child = viewGroup.getChildAt(i);
+
+            if (child instanceof ViewGroup) {
+                // Recursively dim the children
+                dimNonTransparentParts((ViewGroup) child, dimAmount);
+            } else {
+                Drawable drawable = child.getBackground();
+                if (drawable != null) {
+                    // Only dim non-transparent parts
+                    drawable.setColorFilter(new PorterDuffColorFilter(
+                            Color.argb(Math.round(dimAmount * 255), 0, 0, 0),
+                            PorterDuff.Mode.SRC_ATOP
+                    ));
+                }
+            }
+        }
     }
 
     public void set(float x, float y){

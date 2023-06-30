@@ -12,6 +12,10 @@ public class Journal_Describer{
 
     }
 
+    public void add(Group_Describer group_describer){
+        add_group(group_describer.name);
+    }
+
     public void add_group(String name){
         groups.add(new Group_Describer(name));
     }
@@ -37,5 +41,23 @@ public class Journal_Describer{
 
     public int icon_size(){
         return icons.size();
+    }
+
+    public ArrayList<String> data(){
+        ArrayList<String> result = new ArrayList<>();
+        result.add("journal");
+        for(int i = 0; i < groups.size(); i++){
+            result.addAll(groups.get(i).data());
+        }
+        return result;
+    }
+
+    public String data_string(){
+        ArrayList<String> array = data();
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < array.size(); i++){
+            builder.append(array.get(i)).append("\n");
+        }
+        return builder.toString();
     }
 }

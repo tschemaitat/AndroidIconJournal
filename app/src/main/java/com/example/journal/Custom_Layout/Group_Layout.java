@@ -194,15 +194,15 @@ public class Group_Layout {
 
     ArrayList<Adding_Box> adding_boxes;
     public float set_coordinates(float y_start){
-        System.out.println("group icon id's: ");
+        //System.out.println("group icon id's: ");
         for(int i = 0; i < icons.size(); i++){
-            System.out.print(icons.get(i).id+", ");
+            //System.out.print(icons.get(i).id+", ");
         }
-        System.out.println();
+        //System.out.println();
         this.y = y_start;
         adding_boxes = new ArrayList<>();
         float icon_margin = 10;
-        System.out.println("("+id+")setting card y to: " + y_start);
+        //System.out.println("("+id+")setting card y to: " + y_start);
         float icon_and_card_margin = 10;
         float title_height = 100;
         if(titleView.getHeight() > title_height)
@@ -223,17 +223,17 @@ public class Group_Layout {
             Row_Layout row = rows.get(i);
             float icon_x = x;
             Icon icon = null;
-            System.out.println("starting x: " + icon_x);
+            //System.out.println("starting x: " + icon_x);
             for(int j = 0; j < row.size(); j++){
 
-                System.out.print("icon: " + j + ", ");
+                //System.out.print("icon: " + j + ", ");
                 icon = row.get(j);
-                System.out.println("adding bounding box for icon: " + icon.id + ", index in group: " + icons.indexOf(icon));
+                //System.out.println("adding bounding box for icon: " + icon.id + ", index in group: " + icons.indexOf(icon));
                 adding_boxes.add(new Adding_Box(new Rectanglef(y, y+icon_width, icon_x, icon_x + icon_width), new IconLocationStruct(this, icons.indexOf(icon))));
-                System.out.println("\t"+adding_boxes.get(adding_boxes.size() - 1));
+                //System.out.println("\t"+adding_boxes.get(adding_boxes.size() - 1));
                 icon.set_layout_position(icon_x, y);
                 icon_x += icon_width + icon_margin;
-                System.out.println("adding to x: " + icon_x);
+                //System.out.println("adding to x: " + icon_x);
             }
             //if the row can fit another icon, create a bounding box for adding to the end of the row
             if(row.can_fit(icon_width, group_width) && icon != null){
@@ -243,8 +243,8 @@ public class Group_Layout {
                 //System.out.println("\t"+adding_boxes.get(adding_boxes.size() - 1));
             }
 
-            System.out.println();
-            System.out.println("y+="+icon_width+"(icon width)");
+            //System.out.println();
+            //System.out.println("y+="+icon_width+"(icon width)");
             y += icon_width + icon_margin;
         }
         if(!could_fit_ghost_in_last_row){
@@ -256,14 +256,14 @@ public class Group_Layout {
         //System.out.println("("+id+")setting card height to: " + (int)(y - y_start));
         card.setLayoutParams(ViewFactory.createLayoutParams((int)y_start, -1, 20, 20, -1, (int)(y - y_start)));
         //layout.setLayoutParams(ViewFactory.createLayoutParams(0, 0, 0, 0, -1, (int)y));
-        System.out.println("the adding boxes: ");
+        //System.out.println("the adding boxes: ");
         for(int i = 0; i < adding_boxes.size(); i++){
             adding_boxes.get(i).bounding_box.reduce(50, 50);
         }
         for(int i = 0; i < adding_boxes.size(); i++){
-            System.out.println("\t"+adding_boxes.get(i));
+            //System.out.println("\t"+adding_boxes.get(i));
         }
-        System.out.println("("+id+"finished setting coordinates");
+        //System.out.println("("+id+"finished setting coordinates");
         return y;
     }
 

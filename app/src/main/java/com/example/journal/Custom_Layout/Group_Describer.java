@@ -9,6 +9,10 @@ public class Group_Describer {
         this.name = name;
     }
 
+    public static Group_Describer parse_data(String name){
+        return new Group_Describer(name);
+    }
+
     public void add(Icon_Describer icon){
         icons.add(icon);
     }
@@ -27,5 +31,15 @@ public class Group_Describer {
 
     public int size(){
         return icons.size();
+    }
+
+    public ArrayList<String> data(){
+        ArrayList<String> result = new ArrayList<>();
+        result.add("group");
+        result.add(name);
+        for(int i = 0; i < icons.size(); i++){
+            result.addAll(icons.get(i).data());
+        }
+        return result;
     }
 }
