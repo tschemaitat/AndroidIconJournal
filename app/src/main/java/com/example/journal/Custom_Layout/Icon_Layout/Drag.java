@@ -1,9 +1,11 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Icon_Layout;
 
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.journal.Custom_Layout.Data_Structure.IconLocationStruct;
+import com.example.journal.Custom_Layout.Data_Structure.Rectanglef;
 import com.example.journal.MyAsyncTask;
 
 import java.util.ArrayList;

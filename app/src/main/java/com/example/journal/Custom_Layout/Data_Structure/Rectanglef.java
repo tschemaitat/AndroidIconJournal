@@ -1,4 +1,4 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Data_Structure;
 
 public class Rectanglef {
     float top;

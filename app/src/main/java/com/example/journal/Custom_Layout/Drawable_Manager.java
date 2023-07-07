@@ -5,9 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import com.example.journal.Custom_Layout.Data_Structure.Drawable_With_Data;
 import com.example.journal.R;
 
-import static com.example.journal.Image_Processing.*;
+import static com.example.journal.Custom_Layout.Utility.Image_Processing.*;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,22 +1,21 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Icon_Layout;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 
-import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import com.example.journal.Image_Processing;
-import com.example.journal.R;
-import com.example.journal.ViewFactory;
+import com.example.journal.Custom_Layout.Custom_View.LockableScrollView;
+import com.example.journal.Custom_Layout.Describer.Group_Describer;
+import com.example.journal.Custom_Layout.Describer.Icon_Describer;
+import com.example.journal.Custom_Layout.Describer.Journal_Describer;
+import com.example.journal.Custom_Layout.Drawable_Manager;
+import com.example.journal.Custom_Layout.Data_Structure.Drawable_With_Data;
+import com.example.journal.Custom_Layout.Data_Structure.IconLocationStruct;
+import com.example.journal.Custom_Layout.Entry.Icon_Entry;
+import com.example.journal.Custom_Layout.Entry.Journal_Entry;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Group_Manager {
     ArrayList<Group_Layout> groups = new ArrayList<>();
@@ -78,12 +77,12 @@ public class Group_Manager {
     }
 
     public void setup(Journal_Describer journal){
-        System.out.println("\n\n\n setting up group");
+        //System.out.println("\n\n\n setting up group");
         for(int i = 0; i < journal.groups.size(); i++){
             Group_Describer group_describer = journal.groups.get(i);
             add_group(group_describer.name);
             for(int j = 0; j < group_describer.size(); j++){
-                System.out.println("adding icon from journal");
+                //System.out.println("adding icon from journal");
                 Icon_Describer icon_describer = group_describer.get(j);
                 Drawable_With_Data drawable = Drawable_Manager.get_drawable_from_id(icon_describer.drawable_describer.id);
                 add_icon_plus_layout(new Icon(context, drawable));
@@ -113,6 +112,24 @@ public class Group_Manager {
         return journal_describer;
     }
 
+    public Journal_Entry get_entry(){
+        Journal_Entry entry = new Journal_Entry(get_describer());
+        int icon_count = 0;
+        for(int g = 0; g < groups.size(); g++){
+            Group_Layout group = groups.get(g);
+            Group_Describer group_describer = new Group_Describer(group.title);
+            for(int i = 0; i < group.icons.size(); i++, icon_count++){
+                Icon icon = group.icons.get(i);
+                Icon_Describer icon_describer = new Icon_Describer(icon.drawable_with_data.get_describer());
+                int icon_id = icon_count;
+                boolean on = icon.is_white;
+                String text = "null";
+                entry.add_icon_entry(icon_id, on, text);
+            }
+        }
+        return entry;
+    }
+
     public void new_icon(){
         Icon icon = new Icon(context, Drawable_Manager.get_drawable(0));
         icon.make_white();
@@ -126,7 +143,7 @@ public class Group_Manager {
     }
 
     public void add_icon(IconLocationStruct position, Icon icon){
-        System.out.println("adding icon: " + icon.id + ", to: " + position);
+        //System.out.println("adding icon: " + icon.id + ", to: " + position);
         position.group.add_icon(position.icon_position, icon);
         adjust_rows();
         set_coordinates();
@@ -147,7 +164,7 @@ public class Group_Manager {
     }
 
     public void add_group(String name){
-        System.out.println("adding group");
+        //System.out.println("adding group");
         groups.add(new Group_Layout(context, parent, this, name));
 //        parent.postOnAnimation(new Runnable() {
 //            @Override
@@ -182,13 +199,47 @@ public class Group_Manager {
             parent.getLayoutParams().height = min_height;
         else
             parent.getLayoutParams().height = (int)current_y;
-        System.out.println("num possible boxes: " + adding_boxes.size());
+        //System.out.println("num possible boxes: " + adding_boxes.size());
     }
 
     public void print_cord() {
         for(int i = 0; i < groups.size(); i++)
             groups.get(i).print_cord();
 
+    }
+
+    public void set_entries(Journal_Entry journal_entry){
+        print_tree();
+        int group_index = 0;
+        int group_icon_index = 0;
+        for(int i = 0; i < journal_entry.size(); i++, group_icon_index++){
+            int group_size = -1;
+            try{
+                group_size = groups.get(group_index).icons.size();
+            }catch(Exception e){
+
+            }
+
+            System.out.println("max id: " + (journal_entry.size() - 1) + ", id: " + i + ", group_index: " + group_index + ", group size: "+group_size+", icon in group: " + group_icon_index);
+            while(groups.get(group_index).icons.size() == 0){
+                group_index++;
+            }
+
+            Group_Layout group = groups.get(group_index);
+            Icon icon = group.icons.get(group_icon_index);
+            Icon_Entry icon_entry = journal_entry.get_entry(i);
+            if(icon_entry.on){
+                icon.make_white();
+            }else{
+                icon.make_black();
+            }
+            System.out.println("size: "+ group.icons.size() +", " + (group_icon_index - 1));
+            if(group.icons.size() == group_icon_index + 1){
+                group_index++;
+                group_icon_index = -1;
+            }
+
+        }
     }
 
     public void print_tree() {

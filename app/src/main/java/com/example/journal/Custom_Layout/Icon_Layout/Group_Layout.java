@@ -1,4 +1,4 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Icon_Layout;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -11,15 +11,17 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.example.journal.Image_Processing;
+import com.example.journal.Custom_Layout.Data_Structure.IconLocationStruct;
+import com.example.journal.Custom_Layout.Data_Structure.Rectanglef;
+import com.example.journal.Custom_Layout.Utility.Image_Processing;
 import com.example.journal.R;
-import com.example.journal.ViewFactory;
+import com.example.journal.Custom_Layout.Utility.ViewFactory;
 
 import java.util.ArrayList;
 
 public class Group_Layout {
     static int count = 1;
-    int id;
+    public int id;
     ArrayList<Row_Layout> rows = new ArrayList<>();
     ArrayList<Icon> icons = new ArrayList<>();
     ViewGroup layout;

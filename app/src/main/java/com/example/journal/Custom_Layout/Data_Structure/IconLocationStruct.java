@@ -1,8 +1,10 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Data_Structure;
+
+import com.example.journal.Custom_Layout.Icon_Layout.Group_Layout;
 
 public class IconLocationStruct {
-    Group_Layout group;
-    int icon_position;
+    public Group_Layout group;
+    public int icon_position;
     public IconLocationStruct(Group_Layout group, int icon_position){
         this.group = group;
         this.icon_position = icon_position;

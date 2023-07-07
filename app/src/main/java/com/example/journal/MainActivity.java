@@ -20,6 +20,15 @@ import android.widget.ScrollView;
 import android.Manifest;
 
 import com.example.journal.Custom_Layout.*;
+import com.example.journal.Custom_Layout.Custom_View.LockableScrollView;
+import com.example.journal.Custom_Layout.Describer.User_Journals;
+import com.example.journal.Custom_Layout.Entry.Journal_Entry;
+import com.example.journal.Custom_Layout.Entry.User_Entries;
+import com.example.journal.Custom_Layout.Utility.File_Utilities;
+import com.example.journal.Custom_Layout.Describer.Journal_Describer;
+import com.example.journal.Custom_Layout.Icon_Layout.Group_Manager;
+import com.example.journal.Custom_Layout.Icon_Layout.Icon;
+import com.example.journal.Custom_Layout.Utility.ViewFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,13 +48,14 @@ public class MainActivity extends AppCompatActivity {
         }
         Drawable_Manager.drawables(this);
         verifyStoragePermissions(this);
+        //User_Journals.set_journal_normal();
         context = this;
 
         setContentView(R.layout.activity_main);
         main_layout = findViewById(R.id.main_layout);
 
         //create_edit_page();
-        Journal_Describer journal = User_Information.get_journal(this);
+        Journal_Describer journal = User_Journals.get_journal(this);
         create_journal_entry_page(journal);
         print_view(main_layout, 0);
     }
@@ -130,16 +140,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void close_edit_open_journal(){
+        //this is the object that describes the structure of the journal that was last seen in the edit page
+        //it can be used to create a new Group_Manager object
         Journal_Describer new_journal = displayed_icons.get_describer();
-        String data = new_journal.data_string();
+        //String json_data = new_journal.get_json().toString();
+        //System.out.println(json_data);
         System.out.println("writing data");
-        File_Utilities.writeFile(context, data);
-        System.out.println("new journal:\n"+data);
-        Journal_Describer from_data = User_Information.parse_from_data(data);
-        System.out.println("parse journal from data: \n" + from_data.data_string());
-        User_Information.set_journal(new_journal);
+        User_Journals.write_journal(new_journal, context);
+        //this object is create from the data outputed from the new_journal
+        //this will be used in the new page to make sure that the saved data is not corrupt
+        Journal_Describer from_data = User_Journals.check_data_parse(new_journal);
+        //System.out.println("parse journal from data: \n" + from_data.data_string());
+        User_Journals.set_journal(from_data);
         main_layout.removeAllViews();
-        create_journal_entry_page(User_Information.get_journal(context));
+        create_journal_entry_page(User_Journals.get_journal(context));
+
 
     }
 
@@ -156,11 +171,20 @@ public class MainActivity extends AppCompatActivity {
                 close_journal_open_edit();
             }
         });
+        Journal_Entry journal_entry = User_Entries.get_entry(displayed_icons.get_describer(), context);
+        displayed_icons.set_entries(journal_entry);
     }
 
     public void close_journal_open_edit(){
+        Journal_Entry journal_entry = displayed_icons.get_entry();
+        System.out.println("entry: \n" + journal_entry.get_json());
+        System.out.println("writing entry");
+        User_Entries.write_entry(journal_entry, context);
+        Journal_Entry parsed_entry = User_Entries.get_entry(User_Journals.get_journal(context), context);
+        System.out.println("parsed entry from file: \n" + parsed_entry);
+
         main_layout.removeAllViews();
-        create_edit_page(User_Information.get_journal(context));
+        create_edit_page(User_Journals.get_journal(context));
 
         button_count = 0;
 

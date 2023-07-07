@@ -1,4 +1,4 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Icon_Layout;
 
 import android.view.MotionEvent;
 

@@ -1,12 +1,8 @@
-package com.example.journal;
+package com.example.journal.Custom_Layout.Utility;
 
 
 import android.content.Context;
 import android.graphics.*;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-
-import com.example.journal.Custom_Layout.Drawable_Describer;
 
 import java.io.*;
 import java.util.*;

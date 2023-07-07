@@ -1,10 +1,10 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Icon_Layout;
 
 import android.content.Context;
 import android.view.ViewGroup;
 
-import com.example.journal.Image_Processing;
-import com.example.journal.ViewFactory;
+import com.example.journal.Custom_Layout.Utility.Image_Processing;
+import com.example.journal.Custom_Layout.Utility.ViewFactory;
 
 import java.util.ArrayList;
 

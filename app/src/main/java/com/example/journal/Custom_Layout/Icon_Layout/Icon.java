@@ -1,4 +1,4 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Icon_Layout;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -12,7 +12,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,9 +25,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.example.journal.Image_Processing;
+import com.example.journal.Custom_Layout.Compute_Timer;
+import com.example.journal.Custom_Layout.Data_Structure.Drawable_With_Data;
+import com.example.journal.Custom_Layout.Data_Structure.IconLocationStruct;
+import com.example.journal.Custom_Layout.Utility.Image_Processing;
 import com.example.journal.R;
-import com.example.journal.ViewFactory;
+import com.example.journal.Custom_Layout.Utility.ViewFactory;
 import com.google.android.material.internal.ClippableRoundedCornerLayout;
 
 public class Icon {
@@ -91,7 +93,7 @@ public class Icon {
         background_rounded_square.setLayoutParams(ViewFactory.createLayoutParams(0, -1, 0, 0, Image_Processing.icon_picture_width+shadow_size*2, Image_Processing.icon_picture_width+shadow_size*2));
         view.addView(background_rounded_square);
 
-        System.out.println("\n\n\nbackground fade dimensions: "+circle.getWidth() + ", " + circle.getHeight());
+        //System.out.println("\n\n\nbackground fade dimensions: "+circle.getWidth() + ", " + circle.getHeight());
 
         //edit_mode();
         make_black();
@@ -326,14 +328,6 @@ public class Icon {
     }
 
     public void set_layout_position(float x, float y){
-        if(id == 8){
-            System.out.println("\nsetting layout position: " + x + ", " + y + "\n");
-            try {
-                throw new Exception("Printing stack trace");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         layout_position_x = x;
         layout_position_y = y;
         set(x, y);

@@ -1,4 +1,4 @@
-package com.example.journal;
+package com.example.journal.Custom_Layout.Utility;
 
 
 import android.content.Context;

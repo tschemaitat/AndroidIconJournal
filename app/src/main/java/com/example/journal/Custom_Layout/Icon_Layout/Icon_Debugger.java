@@ -1,4 +1,6 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Icon_Layout;
+
+import com.example.journal.Custom_Layout.Compute_Timer;
 
 import java.util.ArrayList;
 

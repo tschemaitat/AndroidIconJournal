@@ -1,4 +1,7 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Icon_Layout;
+
+import com.example.journal.Custom_Layout.Data_Structure.IconLocationStruct;
+import com.example.journal.Custom_Layout.Data_Structure.Rectanglef;
 
 public class Adding_Box {
     Rectanglef bounding_box;

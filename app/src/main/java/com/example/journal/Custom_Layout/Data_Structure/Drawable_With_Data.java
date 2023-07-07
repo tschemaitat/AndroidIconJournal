@@ -1,11 +1,13 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Data_Structure;
 
 import android.graphics.drawable.Drawable;
 
+import com.example.journal.Custom_Layout.Describer.Drawable_Describer;
+
 public class Drawable_With_Data {
-    Drawable drawable;
+    public Drawable drawable;
     String name;
-    int id;
+    public int id;
     public Drawable_With_Data(Drawable drawable, String name, int id){
         this.drawable = drawable;
         this.name = name;
