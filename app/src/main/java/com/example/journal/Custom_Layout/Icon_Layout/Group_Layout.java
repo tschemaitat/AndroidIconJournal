@@ -46,12 +46,28 @@ public class Group_Layout {
         parent.addView(layout);
         layout = parent;
         create_card();
+        parent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(manager.sheet.sheet_is_open){
+                    manager.sheet.click_while_open();
+                }
+            }
+        });
     }
 
     public void create_card(){
         card = (CardView) LayoutInflater.from(context).inflate(R.layout.card_template, null);
         layout.addView(card);
         card.setLayoutParams(ViewFactory.createLayoutParams(300, -1, 8, 8, -1, -1));
+        card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(manager.sheet.sheet_is_open){
+                    manager.sheet.click_while_open();
+                }
+            }
+        });
         titleView = new TextView(context);
         titleView.setLayoutParams(ViewFactory.createLayoutParams(0, -1, -1, 0, ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
         titleView.setText(title);
@@ -86,7 +102,7 @@ public class Group_Layout {
             ArrayList<Icon> row_icons = rows.get(i).icons;
             for(int j = 0; j < row_icons.size(); j++){
                 if(!icons.contains(row_icons.get(j))){
-                    System.out.println("group: " + id + ", row: " + rows.get(i).id + "at pos: " + j + ", icon: " + row_icons.get(j).id + " is in the row but isn't in the group's list");
+                    System.out.println("group: " + id + ", row: " + rows.get(i).id + "at pos: " + j + ", icon: " + row_icons.get(j).class_id + " is in the row but isn't in the group's list");
                     throw new RuntimeException();
                 }
             }
@@ -306,7 +322,7 @@ public class Group_Layout {
             for(int j = 0; j < row.size(); j++){
                 Icon icon = row.get(j);
                 View view = icon.view;
-                System.out.print(icon.id +", ");
+                System.out.print(icon.class_id +", ");
             }
             System.out.println();
 
@@ -336,7 +352,7 @@ public class Group_Layout {
             return;
         }
         Icon previous_icon = icons.get(index - 1);
-        System.out.println("previous icon: " + previous_icon.id);
+        System.out.println("previous icon: " + previous_icon.class_id);
         for(int i = 0; i < rows.size(); i++){
             if(rows.get(i).icons.contains(previous_icon)){
                 System.out.println("found previous icon, row: " + rows.get(i).id);

@@ -1,4 +1,4 @@
-package com.example.journal.Custom_Layout;
+package com.example.journal.Custom_Layout.Utility;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,13 +21,103 @@ public class Drawable_Manager {
         List<Bitmap> save_bitmaps = new ArrayList<>();
         save_bitmaps = new ArrayList<>();
         String[] drawable_names = {
+                "amusement_park",
+                "apple",
+                "banana",
+                "beach",
+                "bed",
+                "bike",
+                "birthday_cake",
+                "boardgame",
+                "breakfast",
+                "bus",
+                "car",
                 "cat",
-                "cow"
+                "city",
+                "coffee",
+                "coffee_happy",
+                "coffee_heart",
+                "computer",
+                "computer_2",
+                "cow",
+                "deck_of_cards",
+                "dice",
+                "dog",
+                "dog_2",
+                "dumbbell",
+                "fish",
+                "fish_black_and_white",
+                "game",
+                "garden",
+                "grapes",
+                "heart",
+                "house",
+                "iced_coffee",
+                "milk",
+                "motorcycle",
+                "park",
+                "party",
+                "sandwhich",
+                "slice_of_cake",
+                "stove",
+                "sushi",
+                "train",
+                "treadmill",
+                "turkey",
+                "tv",
+                "zoo"
         };
+
         int[] drawable_ids = {
+                R.drawable.amusement_park,
+                R.drawable.apple,
+                R.drawable.banana,
+                R.drawable.beach,
+                R.drawable.bed,
+                R.drawable.bike,
+                R.drawable.birthday_cake,
+                R.drawable.boardgame,
+                R.drawable.breakfast,
+                R.drawable.bus,
+                R.drawable.car,
                 R.drawable.cat,
-                R.drawable.cow
+                R.drawable.city,
+                R.drawable.coffee,
+                R.drawable.coffee_happy,
+                R.drawable.coffee_heart,
+                R.drawable.computer,
+                R.drawable.computer_2,
+                R.drawable.cow,
+                R.drawable.deck_of_cards,
+                R.drawable.dice,
+                R.drawable.dog,
+                R.drawable.dog_2,
+                R.drawable.dumbbell,
+                R.drawable.fish,
+                R.drawable.fish_black_and_white,
+                R.drawable.game,
+                R.drawable.garden,
+                R.drawable.grapes,
+                R.drawable.heart,
+                R.drawable.house,
+                R.drawable.iced_coffee,
+                R.drawable.milk,
+                R.drawable.motorcycle,
+                R.drawable.park,
+                R.drawable.party,
+                R.drawable.sandwhich,
+                R.drawable.slice_of_cake,
+                R.drawable.stove,
+                R.drawable.sushi,
+                R.drawable.train,
+                R.drawable.treadmill,
+                R.drawable.turkey,
+                R.drawable.tv,
+                R.drawable.zoo
         };
+
+
+
 
         Bitmap[] bitmaps = new Bitmap[drawable_ids.length];
         for(int i = 0; i < drawable_ids.length; i++){
@@ -77,6 +167,18 @@ public class Drawable_Manager {
 
     public static Drawable_With_Data get_drawable(int index){
         return drawable_with_data.get(index);
+    }
+
+    public static Drawable_With_Data get_drawable(String name){
+        for(int i = 0; i < drawable_with_data.size(); i++){
+            if(drawable_with_data.get(i).name.equals(name))
+                return drawable_with_data.get(i);
+        }
+        return null;
+    }
+
+    public static ArrayList<Drawable_With_Data>get_drawables(){
+        return drawable_with_data;
     }
 
     public static Drawable_With_Data get_drawable_from_id(int id){

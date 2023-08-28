@@ -9,12 +9,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Journal_Entry {
     Journal_Describer journal;
-    ArrayList<Icon_Entry> icon_entries = new ArrayList<>();
-    public Journal_Entry(Journal_Describer journal){
+    public ArrayList<Icon_Entry> icon_entries = new ArrayList<>();
+    int year;
+    int month;
+    int day;
+    public Journal_Entry(Journal_Describer journal, Calendar date){
         this.journal = journal;
+        year = date.get(Calendar.YEAR);
+        month = date.get(Calendar.MONTH);
+        day = date.get(Calendar.DAY_OF_MONTH);
     }
 
     public void add_icon_entry(int icon_id, boolean on, String text){
@@ -36,7 +43,9 @@ public class Journal_Entry {
         JSONObject json = new JSONObject();
         JSONArray json_entries = new JSONArray();
         try{
-            json.put("date", "7/4/23");
+            json.put("year", year);
+            json.put("month", month);
+            json.put("day", day);
             json.put("journal_name", "default journal name");
             for(int i = 0; i < icon_entries.size(); i++){
                 json_entries.put(icon_entries.get(i).get_json());
@@ -49,7 +58,20 @@ public class Journal_Entry {
     }
 
     public static Journal_Entry parse(JSONObject json, Journal_Describer journal_describer){
-        Journal_Entry journal_entry = new Journal_Entry(journal_describer);
+        int year;
+        int month;
+        int day;
+        try {
+            year = json.getInt("year");
+            month = json.getInt("month");
+            day = json.getInt("day");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.set(year, month, day);
+        Journal_Entry journal_entry = new Journal_Entry(journal_describer, calendar);
 
         try {
             JSONArray entries = json.getJSONArray("entries");

@@ -7,10 +7,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class Journal_Describer{
+    public String name;
     ArrayList<Icon_Describer> icons = new ArrayList<>();
     public ArrayList<Group_Describer> groups = new ArrayList<>();
 
     public Journal_Describer(){
+        name = "default";
     }
 
     public int get_num_icons(){
@@ -87,7 +89,7 @@ public class Journal_Describer{
             String jsonString = jsonObject.toString();
 
             // Output the string to the console
-            System.out.println(jsonString);
+            //System.out.println(jsonString);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -102,7 +104,7 @@ public class Journal_Describer{
             result +=("\tgroup: " + group.name + "\n");
             for(int j = 0; j < group.size(); j++){
                 Icon_Describer icon = group.get(j);
-                result += ("\ticon: " + icon.get_id() + ", "+icon.drawable_describer.id + "\n");
+                result += ("\ticon: " + icon.title + ", " + icon.get_id() + ", "+icon.drawable_describer.id + "\n");
             }
         }
         return result;

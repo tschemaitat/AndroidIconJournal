@@ -6,7 +6,7 @@ import com.example.journal.Custom_Layout.Describer.Drawable_Describer;
 
 public class Drawable_With_Data {
     public Drawable drawable;
-    String name;
+    public String name;
     public int id;
     public Drawable_With_Data(Drawable drawable, String name, int id){
         this.drawable = drawable;

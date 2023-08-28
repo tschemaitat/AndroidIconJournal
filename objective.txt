@@ -1,0 +1,13 @@
+
+image selector
+	scroll
+	categories
+	import images
+entry sheet
+	default on/off
+	icon text
+	confirm turn off if there is text
+edit page
+	group title edit
+edit sheet
+	group (gray/tiny) tiny above icon title

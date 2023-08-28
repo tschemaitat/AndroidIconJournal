@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.example.journal.MyAsyncTask;
-import com.example.journal.R;
+
 
 import java.util.ArrayList;
 

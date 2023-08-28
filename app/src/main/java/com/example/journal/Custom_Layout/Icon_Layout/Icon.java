@@ -12,6 +12,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Debug;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,20 +29,23 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.journal.Custom_Layout.Compute_Timer;
 import com.example.journal.Custom_Layout.Data_Structure.Drawable_With_Data;
 import com.example.journal.Custom_Layout.Data_Structure.IconLocationStruct;
+import com.example.journal.Custom_Layout.Describer.Icon_Describer;
 import com.example.journal.Custom_Layout.Utility.Image_Processing;
 import com.example.journal.R;
 import com.example.journal.Custom_Layout.Utility.ViewFactory;
 import com.google.android.material.internal.ClippableRoundedCornerLayout;
 
 public class Icon {
+    public static int trace_count = 1;
     public static boolean journal_mode = true;
 
     ViewGroup view;
     TextView textView;
     private Row_Layout row;
     static int count = 1;
-    int id;
-    String title;
+    int class_id;
+    public int journal_describer_id;
+    private String title;
     Context context;
     int wiggle = 50;
     final Icon this_icon = this;
@@ -59,22 +63,30 @@ public class Icon {
     ImageView background_rounded_square;
 
     Icon_Debugger icon_debugger;
+    Group_Manager manager;
+    String entry_text = null;
+    ImageView image_view;
 
 
     @SuppressLint("RestrictedApi")
-    public Icon(Context context, Drawable_With_Data drawable_with_data){
+    public Icon(Icon_Describer icon_describer, Group_Manager manager, Context context, Drawable_With_Data drawable_with_data){
+        System.out.println("\t<icon> creating icon: " + icon_describer.title);
+        this.manager = manager;
+        journal_describer_id = -1;
         this.drawable_with_data = drawable_with_data;
         this.context = context;
-        id = count;
-        title = "Icon " + id;
+        class_id = count;
+        title = icon_describer.title;
         count++;
         view = (ConstraintLayout) LayoutInflater.from(context).inflate(R.layout.image_template, null);
-        ImageView image_view = ((ImageView)view.getChildAt(0));
+        image_view = ((ImageView)view.getChildAt(0));
         textView = (TextView) view.getChildAt(1);
         view.bringChildToFront(image_view);
+        if(drawable_with_data.drawable == null){
+            System.out.println("null drawable: " + drawable_with_data.id);
+        }
         image_view.setImageDrawable(drawable_with_data.drawable);
         ConstraintLayout.LayoutParams image_params = ViewFactory.createLayoutParams(10, -1, 0, 0, Image_Processing.icon_picture_width, Image_Processing.icon_picture_width);
-
         image_view.setLayoutParams(image_params);
         //image_view.setVisibility(View.INVISIBLE);
 
@@ -123,6 +135,17 @@ public class Icon {
         black.setBackgroundColor(Color.BLACK);
         roundedCornerLayout.setElevation(100);
         roundedCornerLayout.updateClipBoundsAndCornerRadius(20, 10, 180, 160, 30);
+    }
+
+    public String get_title(){
+        return title;
+    }
+
+    public void set_title(String title){
+        System.out.println("<icon> setting title from: " + this.title + ", to: " + title);
+        this.title = title;
+        setup_text();
+        System.out.println("<icon> my title is now: " + this.title);
     }
 
     private void setup_text(){
@@ -231,9 +254,13 @@ public class Icon {
             @SuppressLint("ClickableViewAccessibility")
 
             public boolean onTouch(View v, MotionEvent event) {
+                System.out.println("<icon> on touch");
                 //if we are not editing, do not do drag
-                if(journal_mode)
+                if(journal_mode){
+                    System.out.println("<icon> finished on touch");
                     return false;
+                }
+
                 if(event.getActionMasked() == MotionEvent.ACTION_DOWN){
                     if(drag != null){
                         if(!drag.finished){
@@ -247,18 +274,33 @@ public class Icon {
                 //return drag.consume_event(event);
                 if(event.getActionMasked() != MotionEvent.ACTION_DOWN)
                     drag.consume_event(event);
+                System.out.println("<icon> finished on touch");
                 return true;
             }
         });
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Debug.stopMethodTracing();
+                //Debug.startMethodTracing("trace " + trace_count);
+                //trace_count++;
+                System.out.println("<icon> view got clicked");
+                if(manager.sheet != null)
+                    if(manager.sheet.sheet_is_open){
+                        manager.sheet.click_while_open();
+                        System.out.println("<icon> finished on click");
+                        return;
+                    }
+                if(manager.edit_mode)
+                    manager.open_sheet(this_icon);
                 //if we are journal, allow icon clicks
                 if(journal_mode){
                     perform_icon_click();
                 }
+                System.out.println("<icon> finished on click");
             }
         });
+
     }
 
     public void perform_icon_click(){
@@ -281,10 +323,15 @@ public class Icon {
     }
 
     public void make_white(){
+        System.out.println("<icon "+journal_describer_id+"> making white");
         is_white = true;
         //do before in case I want to use the black background for the edit screen
         addDimOverlay(view, 0.0f);
         background_rounded_square.setImageDrawable(white_rounded_square);
+
+        System.out.println("icon: opening sheet");
+        manager.open_sheet(this);
+
     }
 
     public void addDimOverlay(ViewGroup viewGroup, float dimAmount) {
@@ -543,5 +590,10 @@ public class Icon {
         }
         else
             animatorSet.start();
+    }
+
+    public void set_drawable(Drawable_With_Data drawable_with_data) {
+        image_view.setImageDrawable(drawable_with_data.drawable);
+        this.drawable_with_data = drawable_with_data;
     }
 }
