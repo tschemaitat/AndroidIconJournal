@@ -162,6 +162,8 @@ public class User_Entries {
         ArrayList<Journal_Entry> entries = get_group_file_entries(journal_describer, date, context);
         int day = date.get(Calendar.DAY_OF_MONTH);
         int month = date.get(Calendar.MONTH);
+        if(entries == null)
+            return null;
         for(int i = 0; i < entries.size(); i++){
             if(entries.get(i).day == day && entries.get(i).month == month){
                 return entries.get(i);

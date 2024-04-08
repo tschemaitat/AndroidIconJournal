@@ -28,11 +28,12 @@ public class Image_Selector implements Close_Listener {
     Context context;
     Drawable_Listener drawable_listener;
     ConstraintLayout layout;
+    Gray_Over gray_over;
     public Image_Selector(ConstraintLayout selector_parent, Context context, Drawable_Listener drawable_listener){
         this.selector_parent = selector_parent;
         this.context = context;
         this.drawable_listener = drawable_listener;
-        add_gray_background();
+        gray_over = add_gray_background();
         construct_selector_view();
 
     }
@@ -41,11 +42,12 @@ public class Image_Selector implements Close_Listener {
         return layout;
     }
 
-    public void add_gray_background(){
-        Gray_Over gray_over = new Gray_Over(context, selector_parent, this);
+    public Gray_Over add_gray_background(){
+        return new Gray_Over(context, selector_parent, this, false);
     }
     @Override
     public void close(){
+        gray_over.close();
         selector_parent.removeView(layout);
     }
 
@@ -89,7 +91,7 @@ public class Image_Selector implements Close_Listener {
             @Override
             public void onClick(View v) {
                 drawable_listener.retrieve_drawable(null);
-                selector_parent.removeView(layout);
+                close();
             }
         });
         return constraintLayout;
@@ -135,7 +137,7 @@ public class Image_Selector implements Close_Listener {
                 @Override
                 public void onClick(View v) {
                     drawable_listener.retrieve_drawable(my_drawable);
-                    selector_parent.removeView(layout);
+                    close();
                 }
             });
             drawable_layout.addView(image);
